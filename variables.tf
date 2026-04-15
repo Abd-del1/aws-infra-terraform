@@ -5,9 +5,9 @@ variable "aws_region" {
 }
 
 variable "instance_name" {
-  description = "Name of the EC2 instance"
+  description = "EC2 instance name"
   type        = string
-  default     = "jenkins-terraform-ec2"
+  default     = "simple-ec2"
 }
 
 variable "instance_type" {
@@ -17,21 +17,12 @@ variable "instance_type" {
 }
 
 variable "ami_id" {
-  description = "AMI ID for the EC2 instance"
+  description = "AMI ID for EC2"
   type        = string
+  default     = "ami-0c02fb55956c7d316"
 }
 
 variable "key_name" {
-  description = "Existing AWS key pair name"
-  type        = string
-}
-
-variable "subnet_id" {
-  description = "Subnet ID where EC2 will be launched"
-  type        = string
-}
-
-variable "security_group_id" {
-  description = "Security group ID to attach to EC2"
+  description = "Existing AWS EC2 key pair name"
   type        = string
 }
