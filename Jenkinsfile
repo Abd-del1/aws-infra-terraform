@@ -27,9 +27,11 @@ AWS_ACCESS_KEY_ID=$ACCESS_KEY
 AWS_SECRET_ACCESS_KEY=$SECRET_KEY
 AWS_DEFAULT_REGION=$REGION
 TF_VAR_aws_region=$REGION
+TF_VAR_vault_addr=$VAULT_ADDR
+TF_VAR_vault_token=$VAULT_TOKEN
 EOF
 
-          echo "Vault secret fetch successful"
+          echo "Vault AWS secret fetch successful"
         '''
       }
     }
