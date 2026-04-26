@@ -1,25 +1,25 @@
-# 🚀 Secure Infrastructure Deployment using Terraform + Vault + GitHub Actions
+# 🚀 Secure Infrastructure Deployment using Terraform + Jenkins + Vault
 
 ## 📌 Overview
 
 This project demonstrates a **secure CI/CD pipeline** for provisioning AWS infrastructure using:
 
 * **Terraform** for Infrastructure as Code
-* **GitHub Actions** for CI/CD automation
+* **Jenkins** for CI/CD automation
 * **HashiCorp Vault** for secure secret management
 
-Infrastructure is deployed **only after manual approval**, ensuring safe and controlled production changes.
+Infrastructure is deployed in a **controlled and secure manner** with a **manual approval step before applying changes**.
 
 ---
 
 ## 🏗️ Architecture
 
 ```text
-Developer → GitHub Repo → GitHub Actions (CI)
+Developer → GitHub Repo → Jenkins (CI)
                                 ↓
-                       GitHub Actions (CD)
+                         Jenkins (CD)
                                 ↓
-                      🔐 HashiCorp Vault
+                        🔐 HashiCorp Vault
                                 ↓
                   Fetch AWS Credentials Securely
                                 ↓
@@ -34,7 +34,7 @@ Developer → GitHub Repo → GitHub Actions (CI)
 
 * Terraform
 * AWS (EC2)
-* GitHub Actions
+* Jenkins
 * HashiCorp Vault
 
 ---
@@ -43,14 +43,12 @@ Developer → GitHub Repo → GitHub Actions (CI)
 
 ```text
 aws-infra-terraform/
-├── .github/workflows/
-│   ├── terraform-pr.yml
-│   └── terraform-deploy.yml
 ├── main.tf
 ├── variables.tf
 ├── outputs.tf
 ├── providers.tf
 ├── terraform.tfvars
+├── Jenkinsfile
 └── README.md
 ```
 
@@ -58,67 +56,65 @@ aws-infra-terraform/
 
 ## ⚙️ CI/CD Workflow
 
-### ✅ CI Pipeline (Pull Request)
+### ✅ CI Pipeline (Jenkins)
 
-Triggered on PR to `main`
+Triggered on code changes.
 
-Steps:
+Performs:
 
-* Terraform fmt check
-* Terraform validate
-* Terraform plan
+* Terraform format check (`terraform fmt -check`)
+* Terraform validation (`terraform validate`)
+* Terraform plan (`terraform plan`)
 
-👉 Ensures infrastructure code quality
+👉 Ensures infrastructure code quality before deployment.
 
 ---
 
-### 🚀 CD Pipeline (Post Merge)
+### 🚀 CD Pipeline (Jenkins)
 
-Triggered on merge to `main`
+Triggered after code is ready for deployment.
 
 Steps:
 
-1. Terraform init
-2. Terraform validate
-3. Terraform plan
-4. ⏸️ Manual approval required
-5. 🔐 Authenticate to Vault
-6. Fetch AWS credentials
-7. Terraform apply
+1. Terraform plan
+2. ⏸️ Manual approval required
+3. 🔐 Fetch AWS credentials from Vault
+4. Terraform apply
 
-👉 Secure deployment using Vault-managed secrets
+👉 Ensures controlled and secure infrastructure deployment.
+
+---
+
+## 🛑 Manual Approval
+
+Deployment is paused before applying changes using Jenkins:
+
+```groovy
+input message: 'Approve Terraform Apply?', ok: 'Deploy'
+```
+
+👉 Prevents accidental deployments to production.
 
 ---
 
 ## 🔐 Secret Management (Vault)
 
 * AWS credentials are stored in **HashiCorp Vault**
-* GitHub Actions authenticates with Vault
+* Jenkins authenticates to Vault
 * Secrets are fetched dynamically during pipeline execution
 
 👉 No hardcoded secrets
-👉 No GitHub-stored AWS credentials
-
----
-
-## 🛑 Manual Approval Gate
-
-Deployment requires approval using GitHub Environments:
-
-* Environment: `production`
-* Requires reviewer approval
-* Prevents accidental deployments
+👉 No credentials stored in GitHub or Jenkins
 
 ---
 
 ## 🚀 How to Use
 
-1. Create feature branch
-2. Push changes
-3. Open Pull Request → CI runs
-4. Merge to main → CD starts
-5. Approve deployment
-6. Infrastructure gets deployed
+1. Push code to repository
+2. Jenkins CI pipeline runs automatically
+3. Review Terraform plan
+4. Approve deployment manually
+5. Infrastructure gets deployed
 
 ---
 
@@ -129,24 +125,36 @@ Deployment requires approval using GitHub Environments:
 
 ---
 
+## 💰 Cost Warning
+
+⚠️ This project provisions real AWS resources.
+
+👉 Remember to destroy resources after testing:
+
+```bash
+terraform destroy -var-file=terraform.tfvars
+```
+
+---
+
 ## 🔮 Future Enhancements
 
-* Add EKS cluster deployment
-* Use S3 remote backend with state locking
-* Implement multi-environment support
-* Add monitoring/logging stack
+* Deploy EKS instead of EC2
+* Add S3 backend with state locking
+* Implement multi-environment setup
+* Add monitoring and logging
 
 ---
 
 ## 👨‍💻 Author
 
-Abd-del1
+**Abd-del1**
 
 ---
 
 ## ⭐ Key Learning
 
-* Secure CI/CD pipelines
-* Vault integration with GitHub Actions
-* Terraform automation
-* Manual approval workflows
+* CI/CD pipeline design using Jenkins
+* Infrastructure automation with Terraform
+* Secure secret management using Vault
+* Manual approval workflows for safe deployments
